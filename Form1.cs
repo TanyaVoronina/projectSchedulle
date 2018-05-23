@@ -83,46 +83,5 @@ namespace ProjectSchedulling
             else
                 Application.Exit();
         }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.DefaultExt = "*.xls;*.xlsx";
-            //ofd.Filter = "Excel 2003(*.xls)|*.xls|Excel 2007(*.xlsx)|*.xlsx";
-            ofd.Title = "Выберите документ для загрузки данных";
-
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                textBox1.Text = ofd.FileName;
-
-                String constr = "Provider=Microsoft.JET.OLEDB.4.0;Data Source=" + ofd.FileName + ";Extended Properties='Excel 8.0; HDR=Yes;IMEX=1;'";
-
-                System.Data.OleDb.OleDbConnection con =
-                    new System.Data.OleDb.OleDbConnection(constr);
-                con.Open();
-
-                DataSet ds = new DataSet();
-                DataTable schemaTable = con.GetOleDbSchemaTable(System.Data.OleDb.OleDbSchemaGuid.Tables,
-                    new object[] { null, null, null, "TABLE" });
-
-                string sheet1 = (string)schemaTable.Rows[0].ItemArray[2];
-                string select = String.Format("SELECT * FROM [{0}]", sheet1);
-
-                System.Data.OleDb.OleDbDataAdapter ad =
-                    new System.Data.OleDb.OleDbDataAdapter(select, con);
-
-                ad.Fill(ds);
-
-                DataTable tb = ds.Tables[0];
-                con.Close();
-                dataGridView1.DataSource = tb;
-                con.Close();
-            }
-            else
-            {
-                MessageBox.Show("Вы не выбрали файл для открытия",
-                        "Загрузка данных...", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
     }
 }
